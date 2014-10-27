@@ -2,11 +2,14 @@
 
 mount -t proc proc /proc
 mount -t devtmpfs devtmpfs /dev
+mount -t sysfs sysfs /sys
 
 modprobe ahci
 modprobe xts
 
 /scripts/opendmcrypt.sh /dev/sda
+
+dmsetup info -c --noheadings -o major,minor /dev/mapper/swap > /sys/power/resume
 
 DISTRO=gentoo
 RELEASE=livedvd-amd64-multilib-20140826
@@ -19,9 +22,9 @@ RO_ROOT="$(/scripts/loopdeloop.sh /dev/mapper/data-0 $DISTROLOOP)"
 DISTROPATH="/mnt/image/0/$DISTROPATH"
 ROOT="$DISTROPATH"/root
 
-mount -t aufs -o "br:$DISTROPATH/overlay:$RO_ROOT=rr" "$DISTRO-$RELEASE" "$ROOT"
+mount -t aufs -o "br:$DISTROPATH/overlay:$RO_ROOT=rr" "$DISTROPATH" "$ROOT"
 
-for move in /proc /dev /mnt/image/*; do
+for move in /proc /dev /sys /mnt/image/*; do
 	mount --move "$move" "$ROOT$move"
 done
 
