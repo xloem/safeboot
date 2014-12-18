@@ -22,15 +22,22 @@ RO_ROOT="$(/scripts/loopdeloop.sh /dev/mapper/data-0 $DISTROLOOP)"
 DISTROPATH="/mnt/image/0/$DISTROPATH"
 ROOT="$DISTROPATH"/root
 
-mount -t aufs -o "br:$DISTROPATH/overlay:$RO_ROOT=rr" "$DISTROPATH" "$ROOT"
+OVERLAYMOUNT="/mnt/overlay"
+mkdir -p "$OVERLAYMOUNT"
+mount /dev/mapper/data-1 "$OVERLAYMOUNT"
 
-for move in /proc /dev /sys /mnt/image/*; do
-	mount --move "$move" "$ROOT$move"
-done
+OVERLAYPATH="$OVERLAYMOUNT/$DISTRO-$RELEASE"
 
 echo
-echo "Anything you'd like to do before booting?  Exit to continue."
+echo "Anything you'd like to do before final mount?  Exit to continue."
+export DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYPATH
 /bin/sh
+
+/scripts/autoaufs.sh "$RO_ROOT" "$OVERLAYPATH" "$ROOT"
+
+for move in /proc /dev /sys /mnt/image/* "$OVERLAYMOUNT"; do
+	mount --move "$move" "$ROOT$move"
+done
 
 
 exec switch_root -c /dev/console "$ROOT" /sbin/init

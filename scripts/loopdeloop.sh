@@ -2,7 +2,7 @@
 
 # opens nested loop images, echo'ing the path of the final one
 
-MOUNTPATHPREFIX=/lib/live/image-
+MOUNTPATHPREFIX=/mnt/image/
 
 if [ "$1" = "--undo" ]; then
 	shift
@@ -19,7 +19,7 @@ for image in "$@"
 do
 	mountpath=$MOUNTPATHPREFIX$count
 	mkdir -p $mountpath &&
-	mount "$lastpath$image" "$mountpath" || exit 1
+	mount "$lastpath$image" "$mountpath" -o ro || exit 1
 	count=$((count+1))
 	lastpath="$mountpath/"
 done
