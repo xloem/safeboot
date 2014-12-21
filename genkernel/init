@@ -20,7 +20,8 @@ RO_ROOT="$(/scripts/loopdeloop.sh /dev/mapper/data-0 $DISTROLOOP)"
 #./loopdeloop.sh /dev/mapper/data-0 Qubes-R2-x86_64-DVD.iso LiveOS/squashfs.img LiveOS/rootfs.img
 
 DISTROPATH="/mnt/image/0/$DISTROPATH"
-ROOT="$DISTROPATH"/root
+ROOT=/mnt/"$DISTRO-$RELEASE"
+mkdir -p "$ROOT"
 
 OVERLAYMOUNT="/mnt/overlay"
 mkdir -p "$OVERLAYMOUNT"
@@ -36,6 +37,7 @@ export DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYPAT
 /scripts/autoaufs.sh "$RO_ROOT" "$OVERLAYPATH" "$ROOT"
 
 for move in /proc /dev /sys /mnt/image/* "$OVERLAYMOUNT"; do
+	mkdir -p "$ROOT$move"
 	mount --move "$move" "$ROOT$move"
 done
 
