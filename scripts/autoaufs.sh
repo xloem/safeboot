@@ -15,7 +15,12 @@ if [ -d "0" ]; then
 	for overlay in *; do
 		BRSTR="$overlay=rr:$BRSTR"
 	done
+	# remove any prefixed zeros
+	overlay=$(echo $overlay | sed 's/^0*//')
+	# add 1
 	overlay=$((overlay+1))
+	# prefix 0s
+	overlay=$(printf %0.6d $overlay)
 else
 	overlay=0
 fi
