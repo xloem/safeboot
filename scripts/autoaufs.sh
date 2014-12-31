@@ -2,6 +2,9 @@
 
 # manages an increasing list of overlays using aufs
 
+# TODO: the top overlay should be on a different partition from the bottom overlays (move them over)
+# the partition containing the bottom overlays should be remounted read-only prior to mount
+
 BASE="$1"
 OVERLAYSPATH="$2"
 DESTINATION="$3"
