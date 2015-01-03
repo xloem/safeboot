@@ -14,12 +14,14 @@ dmsetup info -c --noheadings -o major,minor /dev/mapper/swap > /sys/power/resume
 DISTRO=gentoo
 RELEASE=livedvd-amd64-multilib-20140826
 DISTROPATH=distros/$DISTRO-$RELEASE
+OVERLAYDISTROPATH=overlays/$DISTRO-$RELEASE
 DISTROLOOP="$DISTROPATH/$RELEASE.iso image.squashfs"
 
 RO_ROOT="$(/scripts/loopdeloop.sh /dev/mapper/data-0 $DISTROLOOP)"
 #./loopdeloop.sh /dev/mapper/data-0 Qubes-R2-x86_64-DVD.iso LiveOS/squashfs.img LiveOS/rootfs.img
 
 DISTROPATH="/mnt/image/0/$DISTROPATH"
+OVERLAYDISTROPATH="/mnt/image/0/$OVERLAYDISTROPATH"
 ROOT=/mnt/"$DISTRO-$RELEASE"
 mkdir -p "$ROOT"
 
@@ -34,7 +36,7 @@ echo "Anything you'd like to do before final mount?  Exit to continue."
 export DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYPATH
 /bin/sh
 
-/scripts/autoaufs.sh "$RO_ROOT" "$OVERLAYPATH" "$ROOT"
+/scripts/autoaufs.sh "$ROOT" "$RO_ROOT" "$DISTROPATH/overlays" "$OVERLAYDISTROPATH" "$OVERLAYPATH"
 
 for move in /proc /dev /sys /mnt/image/* "$OVERLAYMOUNT"; do
 	mkdir -p "$ROOT$move"
