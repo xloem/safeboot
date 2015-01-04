@@ -12,10 +12,6 @@ shift
 BASE="$1"
 shift
 
-#BASE="$1"
-#OVERLAYSPATH="$2"
-#DESTINATION="$3"
-
 mkdir -p "$DESTINATION"
 
 BRSTR="$BASE=rr"
@@ -28,7 +24,7 @@ for OVERLAYSPATH in "$@"; do
 		if [ "$overlay" = '*' ]; then
 			overlay=0
 		else
-			BRSTR="$overlay=rr:$BRSTR"
+			BRSTR="$(pwd)/$overlay=rr:$BRSTR"
 		fi
 	done
 done
