@@ -11,27 +11,34 @@
 # Opens a swap partition at the start of the drive, then evenly divides
 # all remaining space among the given number of data areas.
 
-SWAPMEGS=4096
+SWAPMEGS=$((16*1024))
 DATAS=3
 DEVICE=$1
 SECTORSIZE=512
-DEVICESECTORS=156301488
+DEVICESECTORS=3907029168
+ALIGNMENTSECTORS=4
 CRYPTSETUPARGS="--type plain -c aes-xts-plain64 -s 512"
 
 retrkey()
 {
-	true
+	read -s -r PASSPHRASE
 }
 
 outputkey()
 {
-	cat keyfile
+	echo -n "$PASSPHRASE"
+	cat keyfile2
+}
+
+closekey()
+{
+	PASSPHRASE=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 }
 
 # swap header is 1 memory page large, assume 4k memory pages
 SWAPSECTORS=$(((SWAPMEGS * 1024 * 1024 + 4096) / SECTORSIZE ))
 
-DATASECTORS=$(((DEVICESECTORS-SWAPSECTORS)/DATAS))
+DATASECTORS=$(((DEVICESECTORS-SWAPSECTORS)/DATAS/ALIGNMENTSECTORS*ALIGNMENTSECTORS))
 SWAPSECTORS=$((DEVICESECTORS-DATASECTORS*DATAS))
 OFFSET=0
 
@@ -52,3 +59,5 @@ do
 	setup data-$DATA $DATASECTORS
 	DATA=$((DATA+1))
 done
+
+closekey
