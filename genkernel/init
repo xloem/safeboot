@@ -36,7 +36,7 @@ echo "Anything you'd like to do before final mount?  Exit to continue."
 export DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYPATH
 /bin/sh
 
-/scripts/autoaufs.sh "$ROOT" "$RO_ROOT" "$DISTROPATH/overlays" "$OVERLAYDISTROPATH" "$OVERLAYPATH"
+/scripts/autoaufs.sh "$ROOT" "$RO_ROOT" "$DISTROPATH/overlays" "$OVERLAYDISTROPATH" "$OVERLAYPATH" || /bin/sh
 
 for move in /proc /dev /sys /mnt/image/* "$OVERLAYMOUNT"; do
 	mkdir -p "$ROOT$move"
