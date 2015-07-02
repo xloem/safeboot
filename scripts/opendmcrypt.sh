@@ -11,13 +11,15 @@
 # Opens a swap partition at the start of the drive, then evenly divides
 # all remaining space among the given number of data areas.
 
+DEVICE=$1
 SWAPMEGS=$((16*1024))
 DATAS=3
-DEVICE=$1
-SECTORSIZE=512
-DEVICESECTORS=3907029168
-ALIGNMENTSECTORS=4
 CRYPTSETUPARGS="--type plain -c aes-xts-plain64 -s 512"
+
+SECTORSIZE=$(($(blockdev --getss "$DEVICE")))
+DEVICESECTORS=$(($(blockdev --getsz "$DEVICE")))
+BLOCKSIZE=$(($(blockdev --getbsz "$DEVICE")))
+ALIGNMENTSECTORS=$((BLOCKSIZE/SECTORSIZE))
 
 retrkey()
 {
