@@ -7,14 +7,16 @@ mount -t sysfs sysfs /sys
 modprobe ahci
 modprobe xts
 
-/scripts/opendmcrypt.sh /dev/sda
+/scripts/opendmcrypt.sh /dev/sda || /bin/sh
 
 dmsetup info -c --noheadings -o major,minor /dev/mapper/swap > /sys/power/resume
+
+OVERLAYFS=aufs
 
 DISTRO=gentoo
 RELEASE=livedvd-amd64-multilib-20140826
 DISTROPATH=distros/$DISTRO-$RELEASE
-OVERLAYDISTROPATH=overlays/$DISTRO-$RELEASE
+OVERLAYDISTROPATH=overlays-$OVERLAYFS/$DISTRO-$RELEASE
 DISTROLOOP="$DISTROPATH/$RELEASE.iso image.squashfs"
 
 RO_ROOT="$(/scripts/loopdeloop.sh /dev/mapper/data-0 $DISTROLOOP)"
@@ -29,14 +31,16 @@ OVERLAYMOUNT="/mnt/overlay"
 mkdir -p "$OVERLAYMOUNT"
 mount /dev/mapper/data-1 "$OVERLAYMOUNT"
 
-OVERLAYPATH="$OVERLAYMOUNT/$DISTRO-$RELEASE"
+OVERLAYPATH="$OVERLAYMOUNT/$DISTRO-$RELEASE-$OVERLAYFS"
 
 echo
 echo "Anything you'd like to do before final mount?  Exit to continue."
 export DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYPATH
 /bin/sh
 
-/scripts/autoaufs.sh "$ROOT" "$RO_ROOT" "$DISTROPATH/overlays" "$OVERLAYDISTROPATH" "$OVERLAYPATH" || /bin/sh
+#/scripts/aufs_auto.sh "$ROOT" "$RO_ROOT" "$DISTROPATH/overlays" "$OVERLAYDISTROPATH" "$OVERLAYPATH" || /bin/sh
+#/scripts/overlayfs_auto.sh "$ROOT" "$RO_ROOT" "$OVERLAYPATH"
+/scripts/${OVERLAYFS}_auto.sh "$ROOT" "$RO_ROOT" "$DISTROPATH/overlays-$OVERLAYFS" "$OVERLAYDISTROPATH" "$OVERLAYPATH" || /bin/sh
 
 for move in /proc /dev /sys /mnt/image/* "$OVERLAYMOUNT"; do
 	mkdir -p "$ROOT$move"
