@@ -12,12 +12,16 @@ modprobe xts
 dmsetup info -c --noheadings -o major,minor /dev/mapper/swap > /sys/power/resume
 
 OVERLAYFS=aufs
-
 DISTRO=gentoo
 RELEASE=livedvd-amd64-multilib-20140826
 DISTROPATH=distros/$DISTRO-$RELEASE
 OVERLAYDISTROPATH=overlays-$OVERLAYFS/$DISTRO-$RELEASE
 DISTROLOOP="$DISTROPATH/$RELEASE.iso image.squashfs"
+
+if [[ "$OVERLAYFS" == "unionfs" ]]
+then
+	modprobe fuse
+fi
 
 RO_ROOT="$(/scripts/loopdeloop.sh /dev/mapper/data-0 $DISTROLOOP)"
 #./loopdeloop.sh /dev/mapper/data-0 Qubes-R2-x86_64-DVD.iso LiveOS/squashfs.img LiveOS/rootfs.img
