@@ -39,7 +39,7 @@ OVERLAYPATH="$OVERLAYMOUNT/$DISTRO-$RELEASE-$OVERLAYFS"
 
 echo
 echo "Anything you'd like to do before final mount?  Exit to continue."
-export DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYPATH
+export DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYDISTROPATH OVERLAYPATH
 /bin/sh
 
 #/scripts/aufs_auto.sh "$ROOT" "$RO_ROOT" "$DISTROPATH/overlays" "$OVERLAYDISTROPATH" "$OVERLAYPATH" || /bin/sh
@@ -51,6 +51,8 @@ for move in /proc /dev /sys /mnt/image/* "$OVERLAYMOUNT"; do
 	mount --move "$move" "$ROOT$move"
 done
 
+FINALROOT="$ROOT"
+unset DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYDISTROPATH OVERLAYPATH
 
-exec switch_root -c /dev/console "$ROOT" /sbin/init
+exec switch_root -c /dev/console "$FINALROOT" /sbin/init
 
