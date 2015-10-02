@@ -24,7 +24,7 @@ for OVERLAYSPATH in "$@"; do
 		if [ "$overlay" = '*' ]; then
 			overlay=0
 		else
-			BRSTR="$(pwd)/$overlay=rr:$BRSTR"
+			BRSTR="$(pwd)/$overlay=rr+wh:$BRSTR"
 		fi
 	done
 done
