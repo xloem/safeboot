@@ -37,6 +37,10 @@ mount /dev/mapper/data-1 "$OVERLAYMOUNT"
 
 OVERLAYPATH="$OVERLAYMOUNT/$DISTRO-$RELEASE-$OVERLAYFS"
 
+AUXMOUNT="/mnt/aux"
+mkdir -p "$AUXMOUNT"
+mount /dev/mapper/data-2 "$AUXMOUNT"
+
 echo
 echo "Anything you'd like to do before final mount?  Exit to continue."
 export DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYDISTROPATH OVERLAYPATH
@@ -54,5 +58,9 @@ done
 FINALROOT="$ROOT"
 unset DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYDISTROPATH OVERLAYPATH
 
-exec switch_root -c /dev/console "$FINALROOT" /sbin/init
-
+if [[ -e "$FINALROOT"/usr/lib/systemd/systemd ]]
+then
+  exec switch_root -c /dev/console "$FINALROOT" /usr/lib/systemd/systemd
+else
+  exec switch_root -c /dev/console "$FINALROOT" /sbin/init
+fi
