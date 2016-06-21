@@ -50,7 +50,7 @@ export DISTRO RELEASE DISTROPATH DISTROLOOP RO_ROOT ROOT OVERLAYMOUNT OVERLAYDIS
 #/scripts/overlayfs_auto.sh "$ROOT" "$RO_ROOT" "$OVERLAYPATH"
 /scripts/${OVERLAYFS}_auto.sh "$ROOT" "$RO_ROOT" "$DISTROPATH/overlays-$OVERLAYFS" "$OVERLAYDISTROPATH" "$OVERLAYPATH" || /bin/sh
 
-for move in /proc /dev /sys /mnt/image/* "$OVERLAYMOUNT"; do
+for move in /proc /dev /sys /mnt/image/* "$OVERLAYMOUNT" "$AUXMOUNT"; do
 	mkdir -p "$ROOT$move"
 	mount --move "$move" "$ROOT$move"
 done
